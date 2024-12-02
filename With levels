@@ -1,0 +1,207 @@
+import os
+import random
+
+HEIGHT = 900
+WIDTH = 900
+rols=30
+cols=30
+grid_w = WIDTH/rols
+grid_h = HEIGHT/cols
+
+
+intro = loadImage(os.getcwd()+ '\\images\\'+'intro.png')
+instructions =  loadImage(os.getcwd()+ '\\images\\'+'Instructions.png')
+start_button = loadImage(os.getcwd()+ '\\images\\'+'startbutton.png')
+instructions_page = loadImage(os.getcwd() + '\\images\\'+ 'instructions_page.png')
+back_button = loadImage(os.getcwd() + '\\images\\'+ 'back_button.png')
+levelpageimage=loadImage(os.getcwd() + '\\images\\'+'level page.png')
+level1image= loadImage(os.getcwd() + '\\images\\'+'level1.png')
+level2image= loadImage(os.getcwd() + '\\images\\'+'level2.png')
+level3image= loadImage(os.getcwd() + '\\images\\'+'level3.png')
+
+class Game: 
+    def __init__(self,bg):
+        self.start_game = False 
+        self.instructions =False
+        #self. gamebg = image (intro, 0, 0, 900, 900)
+        self.levelpage= False
+        self.level1 = False 
+        self.level2 = False
+        self.level3 = False
+        
+        #maybe put the background pictures into a dictionaries like level 1,2,3
+        self.bg = loadImage(os.getcwd()+'\\images\\'+bg+'.jpg')
+        self.object_lists=[]
+        self.object_rols=[]
+        self.object_cols=[]
+        self.game_detected = False
+        
+    def intro_display(self):
+       #image (intro, 0, 0, 900, 900)
+       if self.start_game == False and self.instructions== False: 
+         image (instructions, WIDTH//4, HEIGHT//2, 462, 77)
+         image (start_button, WIDTH//4, HEIGHT//2 +100, 462, 77)
+         
+         
+         if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2, HEIGHT//2 + 77): #hoover of the instructions button
+            strokeWeight(15)
+            stroke(0, 0, 0)
+            rect(WIDTH//4, HEIGHT//2, 462, 77)
+            image (instructions, WIDTH//4, HEIGHT//2, 462, 77)
+           
+         if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2 +100, HEIGHT//2 + 177): #hoover of start button
+            strokeWeight(15)
+            stroke(0, 0, 0)
+            rect(WIDTH//4, HEIGHT//2 +100, 462, 77)
+            image (start_button, WIDTH//4, HEIGHT//2 +100 , 462, 77)
+            
+       if self.instructions ==True and self.start_game == False: #hoover of the back button in the instructions page
+           image (back_button,  WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+           if mouseX in range (WIDTH//3, WIDTH//3 +278) and mouseY in range(5* HEIGHT//6 +20, 5* HEIGHT//6 + 63):
+              strokeWeight(15)
+              stroke(0, 0, 0)
+              rect(WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+              image (back_button, WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+    
+    def display(self):
+        if self.start_game: 
+            image (levelpageimage, 0, 0, 900, 900)
+            image (level1image, WIDTH//3, HEIGHT//3, 278, 63)
+            image (level2image, WIDTH//3, HEIGHT//3 +20+ 63, 278, 63)
+            image (level3image, WIDTH//3, HEIGHT//3 +40 + 2*63, 278, 63)
+            image (back_button, WIDTH//3 ,  HEIGHT//3 +60 +3*63 , 278, 63)
+            
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3, HEIGHT//3 + 63): #hoover of level 1
+               strokeWeight(15)
+               stroke(0, 0, 0)
+               rect(WIDTH//3, HEIGHT//3, 278, 63)
+               image (level1image, WIDTH//3, HEIGHT//3, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +20 + 63, HEIGHT//3+ 20 + 63 +63): #hoover of level 2
+               strokeWeight(15)
+               stroke(0, 0, 0)
+               rect(WIDTH//3, HEIGHT//3 +20 + 63, 278, 63)
+               image (level2image, WIDTH//3, HEIGHT//3 + 20 + 63, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +40 + 2*63, HEIGHT//3+ 40 + 2*63 +63): #hoover of level 3
+               strokeWeight(15)
+               stroke(0, 0, 0)
+               rect(WIDTH//3, HEIGHT//3+40 + 2*63, 278, 63)
+               image (level3image, WIDTH//3, HEIGHT//3+ 40 + 2*63, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +60 + 3*63, HEIGHT//3 + 60 + 3*63 +63): #hoover of back button
+               strokeWeight(15)
+               stroke(0, 0, 0)
+               rect(WIDTH//3, HEIGHT//3+60 + 3*63, 278, 63)
+               image (back_button, WIDTH//3, HEIGHT//3 + 60 + 3*63, 278, 63)
+           
+           
+            
+        
+        
+        
+        
+        
+        if self.level1:
+            image(self.bg,0,0,WIDTH,HEIGHT)
+            for a in self.object_lists:
+                a.display()
+    
+    def generate_objects(self):
+        for i in range(10):#10 objects for now
+            rol=random.randint(20,29)
+            col=random.randint(0,29)
+            object=Object(rol,col)
+            self.object_lists.append(object)
+            self.object_rols.append(object.x)
+            self.object_cols.append(object.y)
+    
+    def detect_object(self,x_axis,y_axis):
+        for obj in self.object_lists:
+            if obj.x <= x_axis <= obj.x + grid_w and obj.y <= y_axis <= obj.y + grid_h:
+                self.game_detected = True
+                print("Hooray! Object detected!")
+                return
+        self.game_detected = False
+        
+           
+
+class Object:
+
+    def __init__(self,rol,col,r=30):
+        self.r=r
+        self.rol=rol
+        self.col=col
+        self.img="img"
+        self.x=self.col*grid_w
+        self.y=self.rol*grid_h
+        
+    
+    def display(self):    
+        stroke(255, 140, 210)
+        fill(255, 140, 210)
+        ellipse(self.x+grid_w/2,self.y+grid_h/2,self.r,self.r)
+    
+
+        
+        
+        
+        
+    
+      
+game = Game("palms")
+game.generate_objects()
+
+
+def setup(): 
+    size(900, 900)
+    image(intro, 0, 0, 900, 900)
+
+    
+def draw():
+    if game.start_game == False and game.instructions == False: 
+       image (intro, 0, 0, 900, 900)
+       game.intro_display()
+    if game.instructions == True and game.start_game == False: 
+       image (instructions_page, 0, 0, WIDTH, HEIGHT)
+       game.intro_display()
+    if game.start_game == True and game.instructions ==False:
+        game.display()
+        '''x_axis,y_axis = mouseClicked()
+        game.detect_object(x_axis,y_axis)'''
+        
+    print (game.start_game, game.instructions)
+        
+    
+    
+def mouseClicked():
+    if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2, HEIGHT//2 + 77) and game.start_game == False:
+        game.instructions = True
+        
+        
+    if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2 +100, HEIGHT//2 + 177)and game.instructions==False :
+        game.start_game = True
+        
+    if game.instructions ==True: 
+        if mouseX in range (WIDTH//3, WIDTH//3 +278) and mouseY in range(5* HEIGHT//6 +20, 5* HEIGHT//6 + 63):
+            game. instructions = False
+            
+    if game.start_game ==True: 
+        
+        if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3, HEIGHT//3 + 63): #level 1
+            game.level1 = True
+        if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +20 + 63, HEIGHT//3+ 20 + 63 +63): #level 2
+            game.level2 = True
+               
+        if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +40 + 2*63, HEIGHT//3+ 40 + 2*63 +63): #level 3
+            game.level3 = True
+               
+        if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +60 + 3*63, HEIGHT//3 + 60 + 3*63 +63): #back button
+            game.start_game = False
+            
+        
+        
+#if game.level1:
+    #x_axis = mouseX 
+    #y_axis = mouseY
+    #return x_axis,y_axis

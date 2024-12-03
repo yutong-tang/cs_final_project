@@ -1,0 +1,369 @@
+import os
+import random
+import copy
+
+HEIGHT = 900
+WIDTH = 900
+rols=30
+cols=30
+grid_w = WIDTH/rols
+grid_h = HEIGHT/cols
+object_number=3#the numbers of total objects we have in the list
+
+#_________________________________________________________________________________________________________________
+intro = loadImage(os.getcwd()+ '\\images\\'+'intro.png')
+instructions =  loadImage(os.getcwd()+ '\\images\\'+'Instructions.png')
+start_button = loadImage(os.getcwd()+ '\\images\\'+'startbutton.png')
+instructions_page = loadImage(os.getcwd() + '\\images\\'+ 'instructions_page.png')
+back_button = loadImage(os.getcwd() + '\\images\\'+ 'back_button.png')
+levelpageimage=loadImage(os.getcwd() + '\\images\\'+'level page.png')
+level1image= loadImage(os.getcwd() + '\\images\\'+'level1.png')
+level2image= loadImage(os.getcwd() + '\\images\\'+'level2.png')
+level3image= loadImage(os.getcwd() + '\\images\\'+'level3.png')
+replay_image= loadImage(os.getcwd() + '\\images\\'+'replay.png')
+
+object_images=[1,2,3]
+#for i in range (object_number):
+    #object_images.append(i)
+    
+#_________________________________________________________________________________________________________________
+class Game: 
+    def __init__(self,bg):
+        self.start_game = False 
+        self.instructions =False
+        #self. gamebg = image (intro, 0, 0, 900, 900)
+        self.levelpage= False
+        self.level1 = False 
+        self.level2 = False
+        self.level3 = False
+        self.time = 0
+        self. time_allowed = None
+        self. game_over = False
+        self. final_time = 0
+        self.clicks = 6
+        #maybe put the background pictures into a dictionaries like level 1,2,3
+        self.bg = loadImage(os.getcwd()+'\\images\\'+bg+'.jpg')
+        self.object_lists=[]
+        self.game_detected = False
+        self.selected_item= "none"
+        self.start_time=millis()
+        
+    def reset_timer(self):
+        self.start_time = millis()
+        self.time = 0
+
+    def update_timer(self):
+        self.time = (millis() - self.start_time) // 1000
+        
+    def intro_display(self):
+       #image (intro, 0, 0, 900, 900)
+       if self.start_game == False and self.instructions== False: # very first page
+         image (instructions, WIDTH//4, HEIGHT//2, 462, 77)
+         image (start_button, WIDTH//4, HEIGHT//2 +100, 462, 77)
+         
+         
+         
+         if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2, HEIGHT//2 + 77): #instructions button hoover
+            strokeWeight(15)
+            stroke(0, 0, 0)
+            rect(WIDTH//4, HEIGHT//2, 462, 77)
+            image (instructions, WIDTH//4, HEIGHT//2, 462, 77)
+           
+         if mouseX in range (WIDTH//4, WIDTH//4 +462) and mouseY in range(HEIGHT//2 +100, HEIGHT//2 + 177): #start game button hoover
+            strokeWeight(15)
+            stroke(0, 0, 0)
+            rect(WIDTH//4, HEIGHT//2 +100, 462, 77)
+            image (start_button, WIDTH//4, HEIGHT//2 +100 , 462, 77)
+            
+       if self.instructions ==True and self.start_game == False:   #displaying instructions page
+           image (back_button,  WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+           
+           if mouseX in range (WIDTH//3, WIDTH//3 +278) and mouseY in range(5* HEIGHT//6 +20, 5* HEIGHT//6 + 63): #back button on instructions page 
+              strokeWeight(15)
+              stroke(0, 0, 0)
+              rect(WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+              image (back_button, WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+    
+    def instruction_display(self):
+        image (instructions_page, 0, 0, WIDTH, HEIGHT)
+    #displaying instructions page
+        image (back_button,  WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+        if mouseX in range (WIDTH//3, WIDTH//3 +278) and mouseY in range(5* HEIGHT//6 +20, 5* HEIGHT//6 + 63): #back button on instructions page 
+              strokeWeight(15)
+              stroke(0, 0, 0)
+              rect(WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+              image (back_button, WIDTH//3 ,  5*HEIGHT//6 +20, 278, 63)
+    #_________
+    
+    def level_display(self):
+        
+        if self.start_game: #Now the game starts, displaying different levels 
+            image (levelpageimage, 0, 0, 900, 900)
+            image (level1image, WIDTH//3, HEIGHT//3, 278, 63)
+            image (level2image, WIDTH//3, HEIGHT//3 +20+ 63, 278, 63)
+            image (level3image, WIDTH//3, HEIGHT//3 +40 + 2*63, 278, 63)
+            image (back_button, WIDTH//3 ,  HEIGHT//3 +60 +3*63 , 278, 63)
+            
+           
+            
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3, HEIGHT//3 + 63): #hoover of level 1
+                 strokeWeight(15)
+                 stroke(0, 0, 0)
+                 rect(WIDTH//3, HEIGHT//3, 278, 63)
+                 image (level1image, WIDTH//3, HEIGHT//3, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +20 + 63, HEIGHT//3+ 20 + 63 +63): #hoover of level 2
+                 strokeWeight(15)
+                 stroke(0, 0, 0)
+                 rect(WIDTH//3, HEIGHT//3 +20 + 63, 278, 63)
+                 image (level2image, WIDTH//3, HEIGHT//3 + 20 + 63, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +40 + 2*63, HEIGHT//3+ 40 + 2*63 +63): #hoover of level 3
+                 strokeWeight(15)
+                 stroke(0, 0, 0)
+                 rect(WIDTH//3, HEIGHT//3+40 + 2*63, 278, 63)
+                 image (level3image, WIDTH//3, HEIGHT//3+ 40 + 2*63, 278, 63)
+               
+            if mouseX in range (WIDTH//3, WIDTH//3 + 278) and mouseY in range(HEIGHT//3 +60 + 3*63, HEIGHT//3 + 60 + 3*63 +63): #hoover of back button
+                 strokeWeight(15)
+                 stroke(0, 0, 0)
+                 rect(WIDTH//3, HEIGHT//3+60 + 3*63, 278, 63)
+                 image (back_button, WIDTH//3, HEIGHT//3 + 60 + 3*63, 278, 63)
+    #_____
+    
+    def display(self):
+        if self.level1: #inside level 1
+            self.start_time=millis()
+            self.time = (millis() - self.start_time) // 1000
+            image(self.bg,0,0,WIDTH,HEIGHT-100)
+            
+            prompt.display()
+            for a in self.object_lists:
+                a.display()
+            
+            game.losing()
+            game.winning()
+
+   #_____
+    def generate_objects(self):
+        image_list = []
+        #used_cells = set()
+        while len(image_list) < 3:
+            rol = random.randint(0, rols - 1)
+            col = random.randint(0, cols - 1)
+            img = random.choice(object_images)
+            if img not in image_list:
+                object = Object(rol, col, img)
+                self.object_lists.append(object)
+                image_list.append(img)
+            #used_cells.add((rol, col))
+                
+    #_____
+    def select_prompt_object(self):
+        self.selected_item=random.choice(self.object_lists)
+        return self.selected_item
+        
+    def detect_object(self, x_axis, y_axis):
+        if (self.selected_item.x <= x_axis <= self.selected_item.x + grid_w and
+        self.selected_item.y <= y_axis <= self.selected_item.y + grid_h):
+            self.game_detected = True
+            fill(0, 255, 0, 127)  # Highlight the detected object
+            rect(self.selected_item.x, self.selected_item.y, grid_w, grid_h)
+            print("Hooray! Object detected!")
+        else:
+            self.game_detected = False
+            print("No object detected.")
+            self.clicks -= 1  # Decrement clicks regardless of detection
+            if self.clicks <= 0:
+                self.losing()  # Trigger game-over logic when clicks are exhausted
+    
+    def losing(self):
+        self.time_allowed=60
+        if self.time >= self.time_allowed or self.clicks == 0:
+            self.game_over = True 
+            textSize( 50)
+            fill(0)
+            text("GAME OVER", WIDTH // 3, HEIGHT //2 )
+                   #text(str(self.final_time), WIDTH // 3, HEIGHT //2+ 200)
+            image (back_button, WIDTH//6 , 2* HEIGHT//3 , 278, 63)
+            image (replay_image, WIDTH//6 +278 +20 , 2* HEIGHT//3 , 278, 63)
+    
+    def winning(self): 
+        if self.game_detected == True:
+            textSize( 50)
+            fill(0)
+            text("Hooray You Won!!", WIDTH //3.5, HEIGHT //2 )
+            image (back_button, WIDTH//6 , 2* HEIGHT//3 , 278, 63)
+            image (replay_image, WIDTH//6 +278 +20 , 2* HEIGHT//3 , 278, 63)
+            
+    
+    def reset(self, full_reset=False):
+        # Reset game state variables
+        self.level1 = not full_reset
+        self.level2 = False
+        self.level3 = False
+        self.start_game = not full_reset
+        self.instructions = False
+        self.clicks = 6  # Reset clicks to initial value
+        self.game_over = False
+        self.game_detected = False
+        self.selected_item = "none"
+        self.reset_timer()
+    
+        # Handle object regeneration
+        if full_reset:
+            self.object_lists = []  # Clear existing objects
+            self.generate_objects()
+        else:
+            # Ensure objects are still valid
+            for obj in self.object_lists:
+                obj.display()
+    
+        # Reset the prompt object
+        self.selected_item = self.select_prompt_object()
+
+    
+            
+                   
+                   
+        
+           
+#_____________________________________________________________________________________________________________________________
+
+class Object:
+
+    def __init__(self,rol,col,img,r=30):
+        self.r=r
+        self.rol=rol
+        self.col=col
+        self.img=loadImage(os.getcwd()+'\\images\\'+str(img)+'.png')
+        self.x=self.col*grid_w
+        self.y=self.rol*grid_h
+        
+    
+    def display(self):    
+        #stroke(255, 140, 210)
+        #fill(255, 140, 210)
+        #ellipse(self.x+grid_w/2,self.y+grid_h/2,self.r,self.r)
+        image(self.img,self.x,self.y,grid_w,grid_h)
+#________________________________________________________________________________________________________________________________
+class Prompt:
+    def __init__(self,selected_object):
+        self.prompt=game.selected_item
+        self.picture=game.selected_item.img
+    
+    def display(self):
+        noStroke()
+        fill(255,255,255)
+        rect(0,HEIGHT-100,WIDTH,HEIGHT)
+        image(self.picture,100,HEIGHT-90,grid_w,grid_h)
+        
+        
+#________________________________________________________________________________________________________________________________    
+        
+    
+
+        
+        
+        
+        
+    
+      
+game = Game("palms")
+game.generate_objects()
+selected_object=game.select_prompt_object()
+prompt=Prompt(selected_object)
+#______________________________________
+def time():  
+      textSize( 30)
+      fill(0)
+      text("Time:"+ str(game.time), WIDTH // 12, HEIGHT //9 )
+    
+    
+def clicks_display():
+    textSize( 30)
+    fill(0)
+    text("Clicks left:"+ str(game.clicks), 9 * WIDTH // 12, HEIGHT //9 )
+    
+    
+        
+#______________________________________
+
+
+def setup(): 
+    size(900, 900)
+    image(intro, 0, 0, 900, 900)
+
+    
+def draw():
+    if not game.start_game and not game.instructions: 
+       image (intro, 0, 0, 900, 900)
+       game.intro_display()
+    if game.instructions == True and game.start_game == False and game.level1==False: 
+       game.instruction_display()
+    if not game.instructions and game.start_game:
+        game.level_display()
+    if game.level1 and not game.instructions:
+        game.update_timer()
+        game.display()
+        time()
+        clicks_display()
+    if game.game_over:
+        # Clear and show the game-over screen
+        background(255)
+        game.losing()  # Ensure losing is displayed
+        
+    
+    
+def mouseClicked():
+    if not game.instructions and not game.start_game: #actions available at the very start of the game
+        
+        if WIDTH//4 <= mouseX <= WIDTH//4 + 462 and HEIGHT//2 <= mouseY <= HEIGHT//2 + 77:
+            game.instructions = True
+        elif WIDTH//4 <= mouseX <= WIDTH//4 + 462 and HEIGHT//2 + 100 <= mouseY <= HEIGHT//2 + 177 and not game.instructions:
+            game.start_game = True
+            
+        
+    elif game.instructions:  # Inside the instructions
+       if WIDTH//3 <= mouseX <= WIDTH//3 + 278 and 5*HEIGHT//6 + 20 <= mouseY <= 5*HEIGHT//6 + 83:
+           game.instructions = False
+        
+    elif game.start_game: #contitions after start is pressed 
+        if WIDTH//3 <= mouseX <= WIDTH//3 + 278 and HEIGHT//3 <= mouseY <= HEIGHT//3 + 63: # Level 1
+               game.level1 = True
+               game.level2 = game.level3 = False
+               game.start_game=False
+                
+        elif WIDTH//3 <= mouseX <= WIDTH//3 + 278 and HEIGHT//3 + 83 <= mouseY <= HEIGHT//3 + 146:  # Level 2
+                game.level2 = True
+                game.level1 = game.level3 = False
+                game.start_game=False
+                
+        elif WIDTH//3 <= mouseX <= WIDTH//3 + 278 and HEIGHT//3 + 146 <= mouseY <= HEIGHT//3 + 209:  # Level 3
+                game.level3 = True
+                game.level1 = game.level2 = False
+                game.start_game=False
+                
+        elif WIDTH//3 <= mouseX <= WIDTH//3 + 278 and HEIGHT//3 + 209 <= mouseY <= HEIGHT//3 + 272:  # Back Button
+                game.start_game = False
+    
+    if game.level1 and game.game_over==False: #recording where the player clicked
+        x_axis = mouseX
+        y_axis = mouseY
+        game.detect_object(x_axis, y_axis)
+        
+
+    
+    if game.level1 and game.game_over:  # Replay or back button logic after game-over
+        if WIDTH//6 <= mouseX <= WIDTH//6 + 278 and 2*HEIGHT//3 <= mouseY <= 2*HEIGHT//3 + 63:
+            game.reset(True)
+        elif WIDTH//6 +278 +20<= mouseX <= WIDTH//6 + 278+20+278  and 2* HEIGHT//3 <= mouseY <= 2*HEIGHT//3 + 63 :#replay button
+            game.reset()
+    
+    if game.level1 and game.game_detected:
+        if WIDTH//6 <= mouseX <= WIDTH//6 + 278 and 2*HEIGHT//3 <= mouseY <= 2*HEIGHT//3 + 63:
+            game.reset(True)
+        elif WIDTH//6 +278 +20<= mouseX <= WIDTH//6 + 278+278  and 2* HEIGHT//3 <= mouseY <= 2*HEIGHT//3 + 63 :
+            game.reset()
+
+        

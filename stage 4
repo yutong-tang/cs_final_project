@@ -56,6 +56,7 @@ class Game:
         #global clicks
         #set an original value of the clicks
         self.clicks=0 
+        self.hidden_list=[]
         #cut done repetitive code
         '''if self.level1:
              self.clicks = 5
@@ -167,10 +168,23 @@ class Game:
     
    #_____
     def generate_objects(self):
-        self.object_list=[]
+        self.hidden_list=[]
         image_list=[]
         positions=[]
-        while len(image_list)<80:#3 objects for, use while loop to avoid repetition
+        while len(image_list)<10:#generate the hidden_object with prompts
+            #overlapping detection
+            rol=random.randint(1,9)
+            col=random.randint(1,24)#need to calculate the background
+            img=random.choice(hidden_no)
+            if (rol,col) not in positions and img not in image_list:#check image repetition
+                positions.append((rol,col))
+                image_list.append(img)
+                new_object=Object(rol,col,img)
+                self.hidden_list.append(new_object)
+        
+        self.object_list = copy.deepcopy(self.hidden_list)
+
+        while len(image_list)<70:#70 generate other random objects
             #overlapping detection
             rol=random.randint(1,9)
             col=random.randint(1,24)#need to calculate the background
@@ -179,7 +193,8 @@ class Game:
                 positions.append((rol,col))
                 image_list.append(img)
                 new_object=Object(rol,col,img)
-                self.object_lists.append(new_object)
+                self.object_list.append(new_object)
+
                 
                 
     #_____

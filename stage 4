@@ -11,6 +11,8 @@ grid_h = HEIGHT/cols
 object_number=3#the numbers of total objects we have in the list
 #clicks= 20
 
+hiddens_no = [56, 21, 47, 67, 33, 34, 44,51, 8, 14]
+
 #_________________________________________________________________________________________________________________
 intro = loadImage(os.getcwd()+ '\\images\\'+'intro.png')
 instructions =  loadImage(os.getcwd()+ '\\images\\'+'Instructions.png')
@@ -183,7 +185,10 @@ class Game:
     #_____
     def select_prompt_object(self):
         self.selected_item=random.choice(self.object_lists)
-        return self.selected_item
+        self.bombdict = {56: 40 , 21: 30 , 47:4 , 67: 76 , 33: 50, 34:36, 44:20, 51:5 , 8: 10, 14: 53}
+        self. bomb = self.bombdict[self.selected_item]
+        return self.selected_item and self.bomb 
+
     #______________________________________________________________
        
     def detect_object(self, x_axis, y_axis):
